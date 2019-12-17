@@ -54,8 +54,9 @@
 					<section id="onsom">
 						<h2>On sóm?</h2>
 						<p>Si voleu fer un tour guiat per les nostres oficines, podeu trobar-nos a l'antiga residència de <span lang="en">Hugh Hefner</span>, al 10236 del carrer <span lang="en">Charing Cross</span> de <span lang="en">Holmby Hills</span>, <span lang="es">Los Ángeles</span>, Califòrnia.</p>
-						<div id="mapa">
-						</div>
+						<figure>
+							<img src="${pageContext.request.contextPath}/img/location.jpg" class="img-responsive" alt="Localització">
+						</figure>
 					</section>
 					<section id="feina">
 						<h2>Alguna cosa més?</h2>
@@ -74,31 +75,4 @@
 		</div>
  		<%@ include file="public-footer.jsp" %>
 	</body>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGpkiPuVnKsnHsmddpV8TuZsTz5QMK7bU&sensor=false"></script>
-	<script>
-			google.maps.event.addDomListener(window, 'load', init);
-			google.maps.event.addDomListener(window, 'resize', function() {
-				map.setCenter(new google.maps.LatLng(34.0757802398, -118.43105418));
-			});
-
-			function init() {
-				var mapOptions = {
-					zoom: 19,
-					center: new google.maps.LatLng(34.0757802398, -118.43105418),
-					disableDefaultUI: false,
-					scrollwheel: false,
-					draggable: false,
-					mapTypeId: google.maps.MapTypeId.SATELLITE
-				};
-				var mapElement = document.getElementById('mapa');
-				mapa = new google.maps.Map(mapElement, mapOptions);
-				var image = '';
-				var myLatLng = new google.maps.LatLng(34.0757802398, -118.43105418);
-				var beachMarker = new google.maps.Marker({
-					position: myLatLng,
-					map: mapa,
-					icon: image
-				});
-			};
-		</script>
 </html>
