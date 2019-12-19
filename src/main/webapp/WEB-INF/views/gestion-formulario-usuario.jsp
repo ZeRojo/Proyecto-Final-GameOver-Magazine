@@ -152,30 +152,7 @@
 			$("#modalCerrar").on("click", function(){
 		    	$("#modalUploadAvatar").modal("hide");
 			});
-			
-			
-			/*$("#submitForm").on("click",function() {
-				event.preventDefault();
-				if ($("#passwordfield").val()!="") {
-					if ($("#passwordfield").val()==$("#passwordfield2").val()) $("#guardarUsuario").submit(); 
-					else {
-						$("#passError").text("Las contraseñas no coinciden").addClass("alert alert-danger box");
-						$("#passwordfield").focus();
-					}
-				} else {
-					$("#passError").text("Las contraseñas no pueden estar vacias").addClass("alert alert-danger box");
-				}
-			})*/
-			
-			/*$("#passwordfield2").focusout(function() {
-				if ($("#passwordfield").val()!=$("#passwordfield2").val()) {
-					$("#passError").text("Las contraseñas no coinciden").addClass("alert alert-danger box");
-					$("#passwordfield").focus();
-				} else {
-					$("#passError").text("").removeClass("alert alert-danger box");
-				}
-			})*/
-			
+						
 			$("#uploadAvatarConfirmar").on("click",function(){
 				event.preventDefault();
 				//Desabilitamos el boton temporalmente
