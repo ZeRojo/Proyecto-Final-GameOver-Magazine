@@ -15,7 +15,6 @@
 		<script src="https://kit.fontawesome.com/19d4302e93.js" crossorigin="anonymous"></script>
 		<script src="${pageContext.request.contextPath}/scripts/jquery-2.2.4.min.js" type="text/javascript"></script>
 		<script src="${pageContext.request.contextPath}/scripts/bootstrap.min.js" type="text/javascript"></script>
-		<script src="${pageContext.request.contextPath}/scripts/scripts.js" type="text/javascript"></script>
         <script src="${pageContext.request.contextPath}/scripts/ie10-viewport-bug-workaround.js" type="text/javascript"></script>
         <script src="${pageContext.request.contextPath}/scripts/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
 		<script src="${pageContext.request.contextPath}/scripts/slick.min.js" type="text/javascript"></script>
