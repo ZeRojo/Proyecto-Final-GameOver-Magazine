@@ -83,7 +83,14 @@ $("#menu-navegacio-principal li").each(function(index) {
 });
 
 $("#menu-navegacio-principal li").on("click",function() {
-	if ($(this).hasClass("active")) event.preventDefault();
+	if ($(this).hasClass("active")) {
+		$(this).first("a").on("click",function(){
+			event.preventDefault();
+		})
+		
+		
+	}
+	
 })
 
 </script>

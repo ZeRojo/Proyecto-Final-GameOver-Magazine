@@ -26,16 +26,23 @@
 			<div class="contenedor">
 				<h1>${titulo}</h1>
 				<form:form id="guardarUsuario" modelAttribute="usuario" action="guardar" method="post" class="marginItem">
+					<input type="hidden" name="formtipo" value="${formtipo}">
 					<form:hidden path="idusuario"/>
 					<form:hidden path="usuarioDetalles.idusuario"/>
 					<div class="form-row">
 						<div class="form-group col-md-6">
 							<label for="nombreUsuario">Nombre:</label>
-							<form:input path="nombre" name="nombreUsuario" class="form-control" required="true"/>
+							<form:input path="nombre" name="nombreUsuario" class="form-control"/>
+							<c:if test="${not empty validacion.nombreError}">
+   								<div class="alert alert-danger formError">${validacion.nombreError}</div>   
+							</c:if>
 						</div>
 						<div class="form-group col-md-6">
 							<label for="nick">Nickname:</label>
 							<form:input path="usuarioDetalles.nombre" name="nick" class="form-control"/>
+							<c:if test="${not empty validacion.nicknameError}">
+   								<div class="alert alert-danger formError">${validacion.nicknameError}</div>   
+							</c:if>
 						</div>
 					</div>	
 					<div class="form-row">
@@ -48,6 +55,9 @@
 							<label for="password2">Repita Password:</label>
 							<input  id="passwordfield2" type="password" name="password2" class="form-control">
 						</div>
+						<c:if test="${not empty validacion.passwordError}">
+   							<div class="alert alert-danger formError">${validacion.passwordError}</div>   
+						</c:if>
 					</div>
 					<div class="custom-row">
 						<div class="custom-label">
@@ -56,6 +66,9 @@
 						<div class="custom-group-sp">
 							<form:checkboxes items="${rangos}" path="rangos"/>
 						</div>
+						<c:if test="${not empty validacion.rangoError}">
+   							<div class="alert alert-danger formError">${validacion.rangoError}</div>   
+						</c:if>
 					</div>
 					<div class="form-row">
 						<div class="col-md-6">
@@ -140,7 +153,8 @@
 		    	$("#modalUploadAvatar").modal("hide");
 			});
 			
-			$("#submitForm").on("click",function() {
+			
+			/*$("#submitForm").on("click",function() {
 				event.preventDefault();
 				if ($("#passwordfield").val()!="") {
 					if ($("#passwordfield").val()==$("#passwordfield2").val()) $("#guardarUsuario").submit(); 
@@ -151,16 +165,16 @@
 				} else {
 					$("#passError").text("Las contraseñas no pueden estar vacias").addClass("alert alert-danger box");
 				}
-			})
+			})*/
 			
-			$("#passwordfield2").focusout(function() {
+			/*$("#passwordfield2").focusout(function() {
 				if ($("#passwordfield").val()!=$("#passwordfield2").val()) {
 					$("#passError").text("Las contraseñas no coinciden").addClass("alert alert-danger box");
 					$("#passwordfield").focus();
 				} else {
 					$("#passError").text("").removeClass("alert alert-danger box");
 				}
-			})
+			})*/
 			
 			$("#uploadAvatarConfirmar").on("click",function(){
 				event.preventDefault();

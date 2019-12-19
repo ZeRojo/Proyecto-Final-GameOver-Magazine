@@ -1,10 +1,12 @@
 package gameover.controllers;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +51,6 @@ public class VideosController {
 		modelo.addAttribute("video", new Video());
 		modelo.addAttribute("variables", variables);
 		modelo.addAttribute("titulo","Nuevo vídeo");
-		modelo.addAttribute("tarea","Nuevo");
 		modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
 		modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());
 		return "gestion-formulario-video";
@@ -63,16 +64,24 @@ public class VideosController {
 		modelo.addAttribute("video", video);
 		modelo.addAttribute("variables", variables);
 		modelo.addAttribute("titulo","Editar vídeo");
-		modelo.addAttribute("tarea","Editar");
 		modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
 		modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());
 		return "gestion-formulario-video";
 	}
 	
 	@PostMapping("/guardar")
-	public String guardarVideo(@ModelAttribute("video") Video video) {
-		videoService.saveVideo(video);
-		return "redirect:/gestion/videos/listado";
+	public String guardarVideo(@Valid @ModelAttribute("video") Video video, BindingResult bindingResult, Model modelo) {
+		if (bindingResult.hasErrors()) {
+			modelo.addAttribute("variables", variables);
+			modelo.addAttribute("titulo","Editar video");
+			modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
+			modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());
+			modelo.addAttribute("video",video);
+			return "gestion-formulario-video";
+		} else {
+			videoService.saveVideo(video);
+			return "redirect:/gestion/videos/listado";
+		}
 	}
 	
 	@PostMapping("/eliminar")

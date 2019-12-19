@@ -7,6 +7,8 @@ import gameover.models.UsuarioDetalles;
 
 public interface IntUsuarioService {
 	
+	boolean checkUsuarioExists(String nombre, int id);
+	
 	Usuario getUsuario(int idusuario);
 	
 	Usuario findUserByUserName(String nombre);

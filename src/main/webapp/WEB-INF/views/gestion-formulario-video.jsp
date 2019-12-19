@@ -30,17 +30,20 @@
 					<div class="form-row">
 						<div class="form-group col-md-6">
 							<label for="nombre">Nombre:</label>
-							<form:input path="nombre" name="nombre" class="form-control" required="true"/>
+							<form:input path="nombre" name="nombre" class="form-control"/>
+							<form:errors path="nombre" cssClass="alert alert-danger formError"/>
 						</div>
 						<div class="form-group col-md-6">
 							<label for="tipo">Tipo:</label>
-							<form:input path="tipo" name="tipo" class="form-control" required="true"/>
+							<form:input path="tipo" name="tipo" class="form-control"/>
+							<form:errors path="tipo" cssClass="alert alert-danger formError"/>
 						</div>
 					</div>	
 					<div class="form-row">
 						<div class="form-group col-md-12">
 							<label for="link">Link:</label>
-							<form:input path="link" name="link" class="form-control" required="true"/>
+							<form:input path="link" name="link" class="form-control"/>
+							<form:errors path="link" cssClass="alert alert-danger formError"/>
 						</div>
 					</div>
 					<div class="form-row">
@@ -50,7 +53,7 @@
 							</div>
 							<div class="img-btn-grp">
 								<img id="imgThumbnail" src="${variables.rutaImagenes}/videos/${video.thumbnail}"/>
-								<form:hidden path="thumbnail" name="thumbnail" id="inputThumbnail" required="true"/>
+								<form:hidden path="thumbnail" name="thumbnail" id="inputThumbnail"/>
 								<button type="button" id="uploadThumbail" class="form-control btn btn-outline-primary">Subir thumbnail</button>
 							</div>
 						</div>

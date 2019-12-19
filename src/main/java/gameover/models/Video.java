@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="videos")
@@ -16,12 +18,18 @@ public class Video {
 	@Column(name="idvideo")
 	private int idvideo;
 	
+	@NotBlank(message="Este campo es obligatorio.")
+	@Size(min=3,message="El tamaño mínimo es de 3 caracteres.")
 	@Column(name="nombre")
 	private String nombre;
 	
+	@NotBlank(message="Este campo es obligatorio.")
+	@Size(min=3,message="El tamaño mínimo es de 3 caracteres.")
 	@Column(name="tipo")
 	private String tipo;
 	
+	@NotBlank(message="Este campo es obligatorio.")
+	@Size(min=3,message="El tamaño mínimo es de 3 caracteres.")
 	@Column(name="link")
 	private String link;
 	

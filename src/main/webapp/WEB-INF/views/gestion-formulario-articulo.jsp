@@ -28,14 +28,14 @@
 				<c:if test="${tarea=='Nuevo'}">
 					<div class="marginItem">
 						<!-- Formulario de envio del título nuevo o a editar // envio por ajax -->
-						<form action="file/folderWork" method="post">
+						<form action="guardaTitulo" method="post">
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label for="nombreArt">Nombre del artículo:</label>
-									<input type="text" class="form-control" id="formNombreTitArt" placeholder="Nombre" value="${articulo.nombre}" required>
+									<input type="text" class="form-control" id="formNombreTitArt" placeholder="Nombre" value="${articulo.nombre}">
 								</div>
 							</div>
-							<div id="formTitMsg"></div>
+							<div id="formTitMsg" class="formError"></div>
 							<div class="submit-group-btn" id="formTitBtn">
 								<input id="sendNombreArt" class="btn btn-primary" type="submit" value="Guardar">
 							</div>
@@ -45,18 +45,23 @@
 				<div <c:if test="${tarea=='Nuevo'}">class="marginItem formHidden"</c:if><c:if test="${tarea=='Editar'}">class="marginItem"</c:if>>
 					<!-- Formulario completo // Envio por post -->
 					<form:form id="formularioArticulo" modelAttribute="articulo" action="guardaArticulo" method="post" accept-charset="UTF-8">
-						<form:hidden path="idarticulo" id="idarticulo" />
-						<form:hidden id="nombre_opt" path="nombre_opt" required/>
+						<input type="hidden" name="tarea" value="${tarea}">
+						<form:hidden path="idarticulo" id="idarticulo"/>
+						<form:hidden id="nombre_opt" path="nombre_opt"/>
 						<form:hidden id="fecha" path="fecha" />
 						<c:if test="${tarea=='Nuevo'}">
-							<form:hidden id="nombre" path="nombre" required/>
+							<form:hidden id="nombre" path="nombre"/>
 						</c:if>
 						<c:if test="${tarea=='Editar'}">
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label for="nombre">Nombre del artículo:</label>
-									<form:input type="text" class="form-control" path="nombre" id="nombre" placeholder="Nombre" value="${articulo.nombre}" required/>
+									<form:input type="text" class="form-control" path="nombre" id="nombre" placeholder="Nombre" value="${articulo.nombre}"/>
+									<c:if test="${not empty validacion.nombreArticuloError}">
+   										<div class="alert alert-danger formError">${validacion.nombreArticuloError}</div>   
+									</c:if>
 								</div>
+								
 							</div>
 						</c:if>
 						<div class="form-row">
@@ -106,6 +111,9 @@
 									<form:input type="text" path="imagen" id="imagen" readonly="readonly" class="form-control"/>
 									<button type="button" class="btn btn-primary" id="uploadImgPrincial" value="bannerImg">Imagen principal</button>
 								</div>
+								<c:if test="${not empty validacion.imagenError}">
+   										<div class="alert alert-danger formError">${validacion.imagenError}</div>   
+									</c:if>
 							</div>
 							<div class="col-md-6">
 								<div class="custom-label">Publicar artículo:</div>
@@ -222,7 +230,7 @@
 				});
 				//Ajax fail
 				ajaxReq.fail(function(jqXHR) {
-					$("#formTitMsg").text(jqXHR.responseText+"("+jqXHR.status+" - "+jqXHR.statusText+")").addClass("alert alert-danger");
+					$("#formTitMsg").text(jqXHR.responseText).addClass("alert alert-danger");
 					$('#sendNombreArt').prop('disabled',false);
 				});
 			});

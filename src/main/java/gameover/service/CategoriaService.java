@@ -15,6 +15,13 @@ public class CategoriaService implements IntCategoriaService {
 
 	@Autowired
 	private IntCategoriaDAO categoriaDAO;
+
+	@Override
+	@Transactional
+	public boolean checkCategoriaExists(String nombre_opt) {
+		return categoriaDAO.checkCategoriaExists(nombre_opt);
+	}
+	
 	
 	@Override
 	@Transactional

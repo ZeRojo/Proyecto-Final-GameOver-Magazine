@@ -17,6 +17,13 @@ public class ArticuloDAO implements IntArticuloDAO {
 	private SessionFactory sessionFactory;
 	
 	@Override
+	public boolean checkArticuloExists(String nombre_opt) {
+		Session sesion=sessionFactory.getCurrentSession();
+		if (((Long) sesion.createQuery("Select count(*) from Articulo where nombre_opt=:nombre_opt").setParameter("nombre_opt", nombre_opt).uniqueResult()).intValue()==0) return false;
+		else return true;
+	}
+	
+	@Override
 	public Articulo getArticulo(int idarticulo) {
 		Session sesion=sessionFactory.getCurrentSession();
 		return sesion.get(Articulo.class, idarticulo);

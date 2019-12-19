@@ -6,6 +6,8 @@ import gameover.models.Articulo;
 
 public interface IntArticuloDAO {
 
+	boolean checkArticuloExists(String nombre_opt);
+	
 	Articulo getArticulo(int idarticulo);
 	
 	Articulo getArticuloByNombreP(String nombre_opt, boolean publicado);

@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -25,6 +27,8 @@ import gameover.models.Tag;
 import gameover.models.Tipo;
 import gameover.models.Usuario;
 import gameover.models.UsuarioDetalles;
+import gameover.resources.ValidationErrors;
+import gameover.resources.iface.IntCustomValidations;
 import gameover.resources.iface.IntGlobalVariables;
 import gameover.resources.iface.IntUsuarioAutenticado;
 import gameover.service.iface.IntArticuloService;
@@ -69,6 +73,12 @@ public class MainController {
 	
 	@Autowired
 	private IntRangoService rangoService;
+	
+	@Autowired
+	private IntCustomValidations customValidations;
+	
+	@Autowired
+	ValidationErrors validacion;
 	
 	@RequestMapping("/")
 	public String paginaInicio(Model modelo) {
@@ -312,6 +322,40 @@ public class MainController {
 		return "gestion-index";
 	}
 	
+	@PostMapping("/checkNuevoUsuario")
+	public ResponseEntity<Object> checkNuevoUsuario(HttpServletRequest request) {
+		customValidations.reset();	
+		if (customValidations.validaNombreUsuario(request.getParameter("nombre"),0)==false) {
+			if (customValidations.validaPasswordsIguales(request.getParameter("password1"), request.getParameter("password2"))==false) {
+				if (customValidations.validaPassword(request.getParameter("password1"))==false) {
+					return new ResponseEntity<>("success",HttpStatus.OK);
+				} else return new ResponseEntity<>(customValidations.getValidationErrors().getPasswordError(),HttpStatus.BAD_REQUEST);
+			} else return new ResponseEntity<>(customValidations.getValidationErrors().getPasswordError(),HttpStatus.BAD_REQUEST);
+		} else return new ResponseEntity<>(customValidations.getValidationErrors().getNombreError(),HttpStatus.BAD_REQUEST);
+	}
+	
+	@PostMapping("/checkEditarUsuario")
+	public ResponseEntity<Object> checkEditarUsuario(HttpServletRequest request) {
+		int idusuario=usuarioAutenticado.getUsuarioAutenticadoId();		
+		customValidations.reset();	
+		if (!request.getParameter("password1").equals("") || !request.getParameter("password2").equals("")) {
+			if (customValidations.validaPasswordsIguales(request.getParameter("password1"), request.getParameter("password2"))==false) {
+				if (customValidations.validaPassword(request.getParameter("password1"))==false) {
+					if (customValidations.validaNombreUsuario(request.getParameter("nombre"),idusuario)==false) {
+						return new ResponseEntity<>("success",HttpStatus.OK);
+					} else return new ResponseEntity<>(customValidations.getValidationErrors().getNombreError(),HttpStatus.BAD_REQUEST);
+				} else return new ResponseEntity<>(customValidations.getValidationErrors().getPasswordError(),HttpStatus.BAD_REQUEST);
+			} else return new ResponseEntity<>(customValidations.getValidationErrors().getPasswordError(),HttpStatus.BAD_REQUEST);
+		} else {
+			if (customValidations.validaNombreUsuario(request.getParameter("nombre"),idusuario)==false) {
+				return new ResponseEntity<>("success",HttpStatus.OK);
+				
+			} else {
+				return new ResponseEntity<>(customValidations.getValidationErrors().getNombreError(),HttpStatus.BAD_REQUEST);
+			}
+		}
+	}
+		
 	@PostMapping("/nuevoUsuario")
 	public String nuevoUsuario(HttpServletRequest request) {
 		Usuario usuario=new Usuario();
@@ -325,7 +369,7 @@ public class MainController {
 		usuario.setUsuarioDetalles(usuarioDetalles);
 		usuarioDetalles.setUsuario(usuario);
 		usuarioService.saveUsuarioDetalles(usuario.getUsuarioDetalles());				
-		String redirectUrl=request.getParameter("url"); 
+		String redirectUrl=request.getParameter("url");
     	return "redirect:"+redirectUrl;
 	}
 	
@@ -350,7 +394,7 @@ public class MainController {
 		if (auth != null){
 			new SecurityContextLogoutHandler().logout(request, response, auth);
 		}    
-		String redirectUrl=request.getParameter("url"); 
+		String redirectUrl=request.getParameter("url");
 		return "redirect:"+redirectUrl;
 	}
 	

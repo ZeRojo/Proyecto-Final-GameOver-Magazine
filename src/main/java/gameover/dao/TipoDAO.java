@@ -17,6 +17,13 @@ public class TipoDAO implements IntTipoDAO {
 	private SessionFactory sessionFactory;
 	
 	@Override
+	public boolean checkTipoExists(String nombre_opt) {
+		Session sesion=sessionFactory.getCurrentSession();
+		if (((Long) sesion.createQuery("Select count(*) from Tipo where nombre_opt=:nombre_opt").setParameter("nombre_opt", nombre_opt).uniqueResult()).intValue()==0) return false;
+		else return true;
+	}
+	
+	@Override
 	public Tipo getTipo(int idtipo) {
 		Session sesion=sessionFactory.getCurrentSession();
 		return sesion.get(Tipo.class, idtipo);

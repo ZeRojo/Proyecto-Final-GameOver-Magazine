@@ -13,19 +13,17 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<div class="modal-body">
-				<form:form id="perfilUsuario" action="${pageContext.request.contextPath}/editarUsuario" method="post" onsubmit="return verificaFormulariPerfil(this);">
+				<form:form id="formPerfilUsuario" action="${pageContext.request.contextPath}/editarUsuario" method="post">
 					<input type="hidden" name="url" id="redirectUrl2" value="">
 					<input type="hidden" name="avatar" id="inputAvatar" value="${usuarioAvatar}"/>
 	 				<div class="form-group">
 	 					<label for="username">Nombre de usuario:</label>
-						<input type="text" name="username" class="form-control" id="username" placeholder="Nombre de usuario" value="<sec:authentication property='name'/>" required>
+						<input type="text" name="username" class="form-control" id="username" placeholder="Nombre de usuario" value="<sec:authentication property='name'/>">
 					</div>
-					<div id="form-error-nombre" class="error-form bg-danger"></div>
 					<div class="form-group">
 	 					<label for="nickname">Nickname:</label>
-						<input type="text" name="nickname" class="form-control" id="nickname" placeholder="Nickname" value="${usuarioNickname}" required>
+						<input type="text" name="nickname" class="form-control" id="nickname" placeholder="Nickname" value="${usuarioNickname}">
 					</div>
-					<div id="form-error-nick" class="error-form bg-danger"></div>
 					<div class="form-group">
 						<label for="password">Contraseña:</label>
 						<input type="password" class="form-control" id="password" name="password" placeholder="Contraseña">
@@ -34,7 +32,7 @@
 						<label for="password2">Repita contraseña:</label>
 						<input type="password" class="form-control" id="password2" name="password2" placeholder="Contraseña">
 					</div>
-					<div id="form-error-passw" class="error-form bg-danger"></div>
+					<div id="regFormMsg" class="error-form bg-danger"></div>
 				</form:form>
 				<div class="img-btn-grp">
 					<img id="imgAvatar" src="${variables.rutaImagenes}/avatar/${usuarioAvatar}"/>
@@ -54,11 +52,7 @@
 </div><!-- /.modal -->	
 <script>
 	$(document).ready(function(){
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
-		$(document).ajaxSend(function(e, xhr, options) {
-	        xhr.setRequestHeader(header, token);
-	    });
+		$("#username").val($("#username").val().toLowerCase());
 		var redirectUrl = (window.location.pathname).replace("/gameover", "");
 		$("#redirectUrl").val(redirectUrl);
 		$("#redirectUrl2").val(redirectUrl);
@@ -69,10 +63,39 @@
 			$("#perfil-modal").modal("show");
 		});
 		
-		$("#sendPerfilForm").on("click",function(){
-			$("#perfilUsuario").submit();
-		})
-		
+		/*ENVIO CAMBIO PERFIL USUARIO*/
+		$("#sendPerfilForm").on("click", function(){
+			event.preventDefault();
+			var formData = new FormData();
+			formData.append("nombre",$("#username").val());
+			formData.append("password1",$("#password").val());
+			formData.append("password2",$("#password2").val());
+			// Llamada ajax
+			var ajaxReq = $.ajax({
+				url : "/gameover/checkEditarUsuario",
+				type : 'POST',
+				data : formData,
+				cache : false,
+				contentType : false,
+				processData : false,
+				xhr: function(){
+					var xhr = $.ajaxSettings.xhr() ;
+					return xhr;
+				},
+				beforeSend: function(xhr) {
+					$('#regFormMsg').text('').removeClass("alert alert-success alert-danger formError");
+				}
+			});
+			// Ajax success
+			ajaxReq.done(function(data) {
+				$("#formPerfilUsuario").submit();
+			});
+			//Ajax fail
+			ajaxReq.fail(function(jqXHR) {
+				$("#regFormMsg").text(jqXHR.responseText).addClass("alert alert-danger formError");
+			});
+		});
+			
 		$("#uploadAvatar").on("click",function(){
 			//Desabilitamos el boton temporalmente
 			$("#avatarFile").trigger("click");

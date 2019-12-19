@@ -1,10 +1,12 @@
 package gameover.controllers;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +51,6 @@ public class EstrenosController {
 		modelo.addAttribute("estreno", new Estreno());
 		modelo.addAttribute("variables", variables);
 		modelo.addAttribute("titulo","Nuevo estreno");
-		modelo.addAttribute("tarea","Nuevo");
 		modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
 		modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());
 		return "gestion-formulario-estreno";
@@ -63,14 +64,21 @@ public class EstrenosController {
 		modelo.addAttribute("estreno", estreno);
 		modelo.addAttribute("variables", variables);
 		modelo.addAttribute("titulo","Editar estreno");
-		modelo.addAttribute("tarea","Editar");
 		modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
 		modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());
 		return "gestion-formulario-estreno";
 	}
 	
 	@PostMapping("/guardar")
-	public String guardarEstreno(@ModelAttribute("estreno") Estreno estreno) {
+	public String guardarEstreno(@Valid @ModelAttribute("estreno") Estreno estreno, BindingResult bindingResult, Model modelo) {
+		if (bindingResult.hasErrors()) {
+			modelo.addAttribute("variables", variables);
+			modelo.addAttribute("titulo","Editar estreno");
+			modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
+			modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());
+			modelo.addAttribute("estreno",estreno);
+			return "gestion-formulario-estreno";
+		}
 		estrenoService.saveEstreno(estreno);
 		return "redirect:/gestion/estrenos/listado";
 	}

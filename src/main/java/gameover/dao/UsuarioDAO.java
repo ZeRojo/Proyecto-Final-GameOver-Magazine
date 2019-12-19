@@ -21,6 +21,14 @@ public class UsuarioDAO implements IntUsuarioDAO {
     private PasswordEncoder passwordEncoder;
  
 	@Override
+	public boolean checkUsuarioExists(String nombre, int id) {
+		Session sesion=sessionFactory.getCurrentSession();
+		if (((Long) sesion.createQuery("Select count(*) from Usuario where nombre=:nombre and idusuario<>:idusuario").setParameter("nombre", nombre).setParameter("idusuario", id).uniqueResult()).intValue()==0) return false;
+		else return true;
+	}
+	
+	
+	@Override
 	public Usuario getUsuario(int idusuario) {
 		Session sesion=sessionFactory.getCurrentSession();
 		Usuario usuario=sesion.createQuery("from Usuario u left join fetch u.rangos where u.idusuario=:idusuario",Usuario.class).setParameter("idusuario", idusuario).uniqueResult();

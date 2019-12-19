@@ -211,6 +211,12 @@ h1, h2 {
 	color: red;
 }
 
+.formError {
+	width: 100%;
+	text-align: center;
+	display: block;
+}
+
 .table img {
 	width: 50px;
 }

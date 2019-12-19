@@ -150,7 +150,7 @@ public class GlobalVariables implements IntGlobalVariables {
 	@Override
 	public String sanearCadena(String cadena) {
 		String tempCadena = (Normalizer.normalize(cadena, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")).toLowerCase();
-		tempCadena = tempCadena.replaceAll("[^a-zA-Z ]", "");
+		tempCadena = tempCadena.replaceAll("[^a-zA-Z0-9 ]", "");
 		tempCadena = tempCadena.trim().replaceAll("\\s{2,}", " ");
 		tempCadena = tempCadena.replaceAll("\\s","-");
 		return tempCadena;

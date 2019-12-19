@@ -17,6 +17,13 @@ public class CategoriaDAO implements IntCategoriaDAO {
 	private SessionFactory sessionFactory;
 
 	@Override
+	public boolean checkCategoriaExists(String nombre_opt) {
+		Session sesion=sessionFactory.getCurrentSession();
+		if (((Long) sesion.createQuery("Select count(*) from Categoria where nombre_opt=:nombre_opt").setParameter("nombre_opt", nombre_opt).uniqueResult()).intValue()==0) return false;
+		else return true;
+	}
+	
+	@Override
 	public Categoria getCategoria(int idcategoria) {
 		Session sesion=sessionFactory.getCurrentSession();
 		return sesion.get(Categoria.class, idcategoria);

@@ -15,6 +15,12 @@ public class ArticuloService implements IntArticuloService {
 
 	@Autowired
 	private IntArticuloDAO articuloDAO;
+
+	@Override
+	@Transactional
+	public boolean checkArticuloExists(String nombre_opt) {
+		return articuloDAO.checkArticuloExists(nombre_opt);
+	}
 	
 	@Override
 	@Transactional

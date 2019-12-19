@@ -6,6 +6,8 @@ import gameover.models.Tipo;
 
 public interface IntTipoService {
 
+	boolean checkTipoExists(String nombre_opt);
+	
 	Tipo getTipo(int idtipo);
 	
 	Tipo getTipoByNombre(String nombre_opt);

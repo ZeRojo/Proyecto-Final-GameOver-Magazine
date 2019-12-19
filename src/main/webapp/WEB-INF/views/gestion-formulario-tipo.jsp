@@ -27,16 +27,24 @@
 							<div class="form-row">
 								<div class="form-group col-md-6">
 									<label for="idEditTipo">Tipo:</label>
-									<select name="idEditTipo" class="form-control" required>
+									<select name="idEditTipo" class="form-control">
 										<option value="0">--Selecciona--</option>
 										<c:forEach var="tipo" items="${tipos}">
 											<option value="${tipo.idtipo}">${tipo.nombre}</option>
 										</c:forEach>
 									</select>
+									<c:if test="${not empty validacion.selectTipoError}">
+   										<div class="alert alert-danger formError">${validacion.selectTipoError}</div>
+									</c:if>
 								</div>
 								<div class="form-group col-md-6">					
 									<label for="nuevoNombreTipo">Nuevo nombre:</label>
-									<input type="text" name="nuevoNombreTipo" class="form-control" required>
+									<input type="text" name="nuevoNombreTipo" class="form-control">
+									<c:if test="${not empty validacion.nombreTipoError}">
+										<c:if test="${tipoForm=='editar'}"> 
+	   										<div class="alert alert-danger formError">${validacion.nombreTipoError}</div>
+	   									</c:if>
+									</c:if>
 								</div>
 							</div>
 							<div class="submit-group-btn">
@@ -51,7 +59,12 @@
 						<form:form action="nuevo" method="post" class="marginItem">
 							<div class="form-group">
 								<label for="nombreNuevoTipo">Nombre:</label>
-								<input type="text" name="nombreNuevoTipo" class="form-control" required>
+								<input type="text" name="nombreNuevoTipo" class="form-control">
+								<c:if test="${not empty validacion.nombreTipoError}">
+									<c:if test="${tipoForm=='nuevo'}"> 
+	   									<div class="alert alert-danger formError">${validacion.nombreTipoError}</div>
+	   								</c:if>
+								</c:if>
 							</div>
 							<div class="submit-group-btn">
 								<input type="submit" class="btn btn-primary" value="Guardar">
@@ -63,7 +76,7 @@
 						<div class="marginItem">
 							<div class="form-group">
 								<label for="idElimTipo">Tipo:</label>
-								<select name="idElimTipo" id="idElimTipo" class="form-control" required>
+								<select name="idElimTipo" id="idElimTipo" class="form-control">
 									<option value="0">--Selecciona--</option>
 									<c:forEach var="tipo" items="${tipos}">
 										<option value="${tipo.idtipo}">${tipo.nombre}</option>

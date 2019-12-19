@@ -19,6 +19,8 @@ import gameover.models.Categoria;
 import gameover.models.Tag;
 import gameover.models.Tipo;
 import gameover.models.Usuario;
+import gameover.resources.ValidationErrors;
+import gameover.resources.iface.IntCustomValidations;
 import gameover.resources.iface.IntGlobalVariables;
 import gameover.resources.iface.IntUsuarioAutenticado;
 import gameover.service.iface.IntArticuloService;
@@ -47,6 +49,12 @@ public class ArticulosController {
 	
 	@Autowired
 	private IntTagService tagService;
+	
+	@Autowired
+	private IntCustomValidations customValidations;
+	
+	@Autowired
+	ValidationErrors validacion;
 	
 	@GetMapping("/listado")
 	public String listadoArticulos(@RequestParam(value="pag",required=false) Integer pagina_destino, Model modelo) {
@@ -107,18 +115,20 @@ public class ArticulosController {
 	@PostMapping("/guardaTitulo")
 	public ResponseEntity<Object> guardaTituloArticulo(@RequestParam("nombre") String nombre) {
 		if (!usuarioAutenticado.isEmparejado()) usuarioAutenticado.setUsuarioAutenticado();
-		Articulo articulo=new Articulo();
-		Usuario usuario=usuarioAutenticado.getUsuarioAutenticado();
-		System.out.println(usuario);
-		articulo.setNombre(nombre);
-		articulo.setNombre_opt(variables.sanearCadena(nombre));
-		articulo.setUsuario(usuario);
-		articulo=articuloService.saveAndRetrieveArticulo(articulo);
-		return new ResponseEntity<>(String.valueOf(articulo.getIdarticulo()),HttpStatus.OK);
+		customValidations.reset();	
+		if (customValidations.validaNombreArticulo(nombre)==false) {
+			Articulo articulo=new Articulo();
+			Usuario usuario=usuarioAutenticado.getUsuarioAutenticado();
+			articulo.setNombre(nombre);
+			articulo.setNombre_opt(variables.sanearCadena(nombre));
+			articulo.setUsuario(usuario);
+			articulo=articuloService.saveAndRetrieveArticulo(articulo);
+			return new ResponseEntity<>(String.valueOf(articulo.getIdarticulo()),HttpStatus.OK);
+		} else return new ResponseEntity<>(customValidations.getValidationErrors().getNombreArticuloError(),HttpStatus.BAD_REQUEST);
 	}
 	
 	@PostMapping("/guardaArticulo")
-	public String guardaArticulo(@ModelAttribute("articulo") Articulo articulo, HttpServletRequest request) {
+	public String guardaArticulo(@ModelAttribute("articulo") Articulo articulo, HttpServletRequest request, Model modelo) {
 		if (!request.getParameter("listadetags").equals("")) {
 			String ids[]=(request.getParameter("listadetags")).split(",");	
 			for (String id:ids) {
@@ -126,11 +136,33 @@ public class ArticulosController {
 				articulo.addTag(tag);
 			}
 		}
-		articulo.setNombre_opt(variables.sanearCadena(articulo.getNombre()));
-		articulo.setUsuario((articuloService.getArticulo(articulo.getIdarticulo())).getUsuario());
-		System.out.println(articulo.getTexto());
-		articuloService.saveArticulo(articulo);
-		return "redirect:/gestion/articulo/listado";
+		customValidations.reset();	
+		validacion=customValidations.validateArticulo(articulo);
+		if (validacion.hasErrors()) {
+			modelo.addAttribute("articulo", articulo);
+			List<Categoria> categorias=categoriaService.getCategorias();
+			List<Tipo> tipos=tipoService.getTipos();
+			modelo.addAttribute("categorias",categorias);
+			modelo.addAttribute("tipos",tipos);
+			modelo.addAttribute("tarea","Editar");
+			if (request.getParameter("tarea").equals("Editar")) {
+				modelo.addAttribute("titulo","Edición del artículo");
+			} else {
+				modelo.addAttribute("titulo","Nuevo artículo");
+			}
+			modelo.addAttribute("variables", variables);
+			modelo.addAttribute("validacion",validacion);
+			modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
+			modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());
+			return "gestion-formulario-articulo";
+		} else {
+			articulo.setNombre_opt(variables.sanearCadena(articulo.getNombre()));
+			articulo.setUsuario((articuloService.getArticulo(articulo.getIdarticulo())).getUsuario());
+			if (articulo.getCategoria().getIdcategoria()==0) articulo.setCategoria(null);
+			if (articulo.getTipo().getIdtipo()==0) articulo.setTipo(null);
+			articuloService.saveArticulo(articulo);
+			return "redirect:/gestion/articulo/listado";
+		}
 	}
 	
 	@PostMapping("/eliminar")

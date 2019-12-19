@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import gameover.models.Categoria;
+import gameover.resources.ValidationErrors;
+import gameover.resources.iface.IntCustomValidations;
 import gameover.resources.iface.IntGlobalVariables;
 import gameover.resources.iface.IntUsuarioAutenticado;
 import gameover.service.iface.IntCategoriaService;
@@ -29,6 +31,12 @@ public class CategoriasController {
 	@Autowired
 	private IntCategoriaService categoriaService;
 	
+	@Autowired
+	private IntCustomValidations customValidations;
+	
+	@Autowired
+	ValidationErrors validacion;
+	
 	@GetMapping("/")
 	public String operacionesCategoria(Model modelo) {
 		if (!usuarioAutenticado.isEmparejado()) usuarioAutenticado.setUsuarioAutenticado();
@@ -43,10 +51,16 @@ public class CategoriasController {
 	@PostMapping("/nueva")
 	public String nuevaCategoria(HttpServletRequest request, Model modelo) {
 		if (!usuarioAutenticado.isEmparejado()) usuarioAutenticado.setUsuarioAutenticado();
-		Categoria categoria=new Categoria();
-		categoria.setNombre(request.getParameter("nombreNuevaCat"));
-		categoria.setNombre_opt(variables.sanearCadena(request.getParameter("nombreNuevaCat")));
-		categoriaService.saveCategoria(categoria);
+		customValidations.reset();	
+		if (customValidations.validaNombreCategoria(request.getParameter("nombreNuevaCat"))==false) {
+			Categoria categoria=new Categoria();
+			categoria.setNombre(request.getParameter("nombreNuevaCat"));
+			categoria.setNombre_opt(variables.sanearCadena(request.getParameter("nombreNuevaCat")));
+			categoriaService.saveCategoria(categoria);			
+		} else {
+			modelo.addAttribute("validacion",customValidations.getValidationErrors());
+			modelo.addAttribute("tipoForm","nueva");
+		}
 		List<Categoria> categorias=categoriaService.getCategorias();
 		modelo.addAttribute("categorias", categorias);
 		modelo.addAttribute("variables", variables);
@@ -58,10 +72,17 @@ public class CategoriasController {
 	@PostMapping("/editar")
 	public String editarCategoria(HttpServletRequest request, Model modelo) {
 		if (!usuarioAutenticado.isEmparejado()) usuarioAutenticado.setUsuarioAutenticado();
-		Categoria categoria=categoriaService.getCategoria(Integer.parseInt(request.getParameter("idEditCat")));
-		categoria.setNombre(request.getParameter("nuevoNombreCat"));
-		categoria.setNombre_opt(variables.sanearCadena(request.getParameter("nuevoNombreCat")));
-		categoriaService.saveCategoria(categoria);
+		customValidations.reset();
+		validacion=customValidations.validateCategoria(request.getParameter("nuevoNombreCat"),Integer.parseInt(request.getParameter("idEditCat")));
+		if (validacion.hasErrors()) {
+			modelo.addAttribute("validacion",customValidations.getValidationErrors());
+			modelo.addAttribute("tipoForm","editar");
+		} else {
+			Categoria categoria=categoriaService.getCategoria(Integer.parseInt(request.getParameter("idEditCat")));
+			categoria.setNombre(request.getParameter("nuevoNombreCat"));
+			categoria.setNombre_opt(variables.sanearCadena(request.getParameter("nuevoNombreCat")));
+			categoriaService.saveCategoria(categoria);
+		}
 		List<Categoria> categorias=categoriaService.getCategorias();
 		modelo.addAttribute("categorias", categorias);
 		modelo.addAttribute("variables", variables);

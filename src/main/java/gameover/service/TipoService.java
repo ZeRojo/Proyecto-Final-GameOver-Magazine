@@ -18,6 +18,12 @@ public class TipoService implements IntTipoService {
 	
 	@Override
 	@Transactional
+	public boolean checkTipoExists(String nombre_opt) {
+		return tipoDAO.checkTipoExists(nombre_opt);
+	}
+	
+	@Override
+	@Transactional
 	public Tipo getTipo(int idtipo) {
 		return tipoDAO.getTipo(idtipo);
 	}

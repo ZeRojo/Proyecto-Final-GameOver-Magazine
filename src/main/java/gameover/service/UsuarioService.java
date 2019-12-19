@@ -23,6 +23,12 @@ public class UsuarioService implements IntUsuarioService {
 	
 	@Override
 	@Transactional
+	public boolean checkUsuarioExists(String nombre, int id) {
+		return usuarioDAO.checkUsuarioExists(nombre, id);
+	}
+	
+	@Override
+	@Transactional
 	public Usuario getUsuario(int idusuario) {
 		return usuarioDAO.getUsuario(idusuario);
 	}

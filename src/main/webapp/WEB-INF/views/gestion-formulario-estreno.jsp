@@ -30,21 +30,25 @@
 					<div class="form-row">
 						<div class="form-group col-md-6">
 							<label for="nombre">Nombre:</label>
-							<form:input path="nombre" name="nombre" class="form-control" required="true"/>
+							<form:input path="nombre" name="nombre" class="form-control"/>
+							<form:errors path="nombre" cssClass="alert alert-danger formError"/>
 						</div>
 						<div class="form-group col-md-6">
 							<label for="temporada">Temporada:</label>
-							<form:input path="temporada" name="temporada" class="form-control" required="true"/>
+							<form:input path="temporada" name="temporada" class="form-control"/>
+							<form:errors path="temporada" cssClass="alert alert-danger formError custErrorTemp"/>
 						</div>
 					</div>	
 					<div class="form-row">
 						<div class="form-group col-md-6">
 							<label for="plataforma">Plataforma:</label>
-							<form:input path="plataforma" name="plataforma" class="form-control" required="true"/>
+							<form:input path="plataforma" name="plataforma" class="form-control"/>
+							<form:errors path="plataforma" cssClass="alert alert-danger formError"/>
 						</div>
 						<div class="form-group col-md-6">
 							<label for="fecha">Fecha: (dd-MM-yyyy)</label>
-							<form:input path="fecha" name="fecha" class="form-control" required="true"/>
+							<form:input path="fecha" name="fecha" class="form-control"/>
+							<form:errors path="fecha" cssClass="alert alert-danger formError custErrorDate"/>
 						</div>
 					</div>
 					<div class="form-row">
@@ -54,7 +58,7 @@
 							</div>
 							<div class="img-btn-grp">
 								<img id="imgThumbnail" src="${variables.rutaImagenes}/estrenos/${estreno.thumbnail}"/>
-								<form:hidden path="thumbnail" name="thumbnail" id="inputThumbnail" required="true"/>
+								<form:hidden path="thumbnail" name="thumbnail" id="inputThumbnail"/>
 								<button type="button" id="uploadThumbail" class="form-control btn btn-outline-primary">Subir thumbnail</button>
 							</div>
 						</div>
@@ -97,6 +101,7 @@
 	</body>
 	<script>
 		$(document).ready(function(){
+			console.log("hola");
 			var token = $("meta[name='_csrf']").attr("content");
 			var header = $("meta[name='_csrf_header']").attr("content");
 			$(document).ajaxSend(function(e, xhr, options) {
@@ -120,6 +125,13 @@
 			$("#modalCerrar").on("click", function(){
 		    	$("#modalUploadThumbnail").modal("hide");
 			});
+			
+			if ($(".custErrorDate").length) {
+				if (($(".custErrorDate").text().split(" ")[0])=="Failed") $(".custErrorDate").text("No es un formato de fecha válido (dd-MM-aaaa)."); 
+			}
+			if ($(".custErrorTemp").length) {
+				if (($(".custErrorTemp").text().split(" ")[0])=="Failed") $(".custErrorTemp").text("No es una temporada válida."); 
+			}
 						
 			$("#uploadThumbnailConfirmar").on("click",function(){
 				event.preventDefault();

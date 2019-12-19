@@ -27,16 +27,24 @@
 							<div class="form-row">
 								<div class="form-group col-md-6">
 									<label for="idEditCat">Categoría:</label>
-									<select name="idEditCat" class="form-control" required>
+									<select name="idEditCat" class="form-control">
 										<option value="0">--Selecciona--</option>
 										<c:forEach var="categoria" items="${categorias}">
 											<option value="${categoria.idcategoria}">${categoria.nombre}</option>
 										</c:forEach>
 									</select>
+									<c:if test="${not empty validacion.selectCategoriaError}">
+   										<div class="alert alert-danger formError">${validacion.selectCategoriaError}</div>
+									</c:if>
 								</div>
 								<div class="form-group col-md-6">
 									<label for="nuevoNombreCat">Nuevo nombre:</label>
-									<input type="text" name="nuevoNombreCat" class="form-control" required/>
+									<input type="text" name="nuevoNombreCat" class="form-control"/>
+									<c:if test="${not empty validacion.nombreCategoriaError}">
+										<c:if test="${tipoForm=='editar'}"> 
+   											<div class="alert alert-danger formError">${validacion.nombreCategoriaError}</div>
+   										</c:if>
+									</c:if>
 								</div>
 							</div>
 							<div class="submit-group-btn">
@@ -51,7 +59,12 @@
 						<form:form action="nueva" method="post" class="marginItem">
 							<div class="form-group">
 								<label for="nombreNuevaCat">Nombre:</label>
-								<input type="text" name="nombreNuevaCat" class="form-control" required>
+								<input type="text" name="nombreNuevaCat" class="form-control">
+								<c:if test="${not empty validacion.nombreCategoriaError}">
+									<c:if test="${tipoForm=='nueva'}"> 
+   										<div class="alert alert-danger formError">${validacion.nombreCategoriaError}</div>
+   									</c:if>
+								</c:if>
 							</div>
 							<div class="submit-group-btn">
 								<input type="submit" class="btn btn-primary" value="Guardar">
@@ -64,7 +77,7 @@
 							<!-- <form:form action="eliminar" method="post" class="marginItem"> -->
 							<div class="form-group">
 								<label for="idElimCat">Categoría:</label>
-								<select name="idElimCat" id="idElimCat" class="form-control" required>
+								<select name="idElimCat" id="idElimCat" class="form-control">
 									<option value="0">--Selecciona--</option>
 									<c:forEach var="categoria" items="${categorias}">
 										<option value="${categoria.idcategoria}">${categoria.nombre}</option>

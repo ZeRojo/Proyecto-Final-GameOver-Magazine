@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import gameover.models.Rango;
 import gameover.models.Usuario;
+import gameover.resources.ValidationErrors;
+import gameover.resources.iface.IntCustomValidations;
 import gameover.resources.iface.IntGlobalVariables;
 import gameover.resources.iface.IntUsuarioAutenticado;
 import gameover.service.iface.IntRangoService;
@@ -39,6 +41,12 @@ public class UsuariosController {
 	@Autowired
 	private IntRangoService rangoService;
 
+	@Autowired
+	private IntCustomValidations customValidations;
+	
+	@Autowired
+	ValidationErrors validacion;
+	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Rango.class, "rangos", new PropertyEditorSupport() {		
@@ -73,6 +81,7 @@ public class UsuariosController {
 		modelo.addAttribute("usuario",usuario);
 		modelo.addAttribute("rangos", rangoService.getRangos());
 		modelo.addAttribute("titulo","Nuevo usuario");
+		modelo.addAttribute("formtipo","nuevo");
 		modelo.addAttribute("variables", variables);
 		modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
 		modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());
@@ -87,6 +96,7 @@ public class UsuariosController {
 		usuario.setPassword("");
 		modelo.addAttribute("usuario",usuario);
 		modelo.addAttribute("titulo","Editar usuario");
+		modelo.addAttribute("formtipo","editar");
 		modelo.addAttribute("rangos", rangoService.getRangos());
 		modelo.addAttribute("variables", variables);
 		modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
@@ -95,18 +105,33 @@ public class UsuariosController {
 	}
 	
 	@PostMapping("/guardar")
-	public String guardarDatosUsuario(@ModelAttribute("usuario") Usuario usuario) {			
+	public String guardarDatosUsuario(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request,Model modelo) {	
 		if (usuario.getUsuarioDetalles().getNombre()==null) usuario.getUsuarioDetalles().setNombre(usuario.getNombre());
 		usuario.getUsuarioDetalles().setUsuario(usuario);
 		usuario.setUsuarioDetalles(usuario.getUsuarioDetalles());
-		if (usuario.getIdusuario()!=0) {
-			usuarioService.saveUsuario(usuario);
-		}
-		usuarioService.saveUsuarioDetalles(usuario.getUsuarioDetalles());
-		if (usuario.getIdusuario()==usuarioAutenticado.getUsuarioAutenticado().getIdusuario()) {
-			return "redirect:/userLogout";
+		customValidations.reset();
+		if (request.getParameter("formtipo").equals("editar") && usuario.getPassword().equals("")) validacion=customValidations.validateUsuarioEmptyPass(usuario); 
+		else validacion=customValidations.validateUsuario(usuario, request.getParameter("password2"));
+		if (validacion.hasErrors()) {
+			modelo.addAttribute("usuario",usuario);
+			modelo.addAttribute("formtipo",request.getParameter("formtipo"));
+			modelo.addAttribute("validacion",validacion);
+			modelo.addAttribute("titulo","Errores en el formulario de usuario");
+			modelo.addAttribute("rangos", rangoService.getRangos());
+			modelo.addAttribute("variables", variables);
+			modelo.addAttribute("usuarioNickname",usuarioAutenticado.getUsuarioAutenticadoNickname());
+			modelo.addAttribute("usuarioAvatar",usuarioAutenticado.getUsuarioAutenticadoAvatar());			
+			return "gestion-formulario-usuario";
 		} else {
-			return "redirect:/gestion/usuarios/listado";
+			if (usuario.getIdusuario()!=0) {
+				usuarioService.saveUsuario(usuario);
+			}
+			usuarioService.saveUsuarioDetalles(usuario.getUsuarioDetalles());
+			if (usuario.getIdusuario()==usuarioAutenticado.getUsuarioAutenticado().getIdusuario()) {
+				return "redirect:/userLogout?gestion=true";
+			} else {
+				return "redirect:/gestion/usuarios/listado";
+			}
 		}
 	}
 
