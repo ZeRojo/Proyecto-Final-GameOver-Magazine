@@ -64,11 +64,7 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <script>
-	var token = $("meta[name='_csrf']").attr("content");
-	var header = $("meta[name='_csrf_header']").attr("content");
-	$(document).ajaxSend(function(e, xhr, options) {
-	    xhr.setRequestHeader(header, token);
-	});
+	
 	var urlParams = new URLSearchParams(window.location.search);
 	$(document).ready(function(){
 		var redirectUrl = (window.location.pathname).replace("/gameover", "");
@@ -77,6 +73,12 @@
 		if (urlParams.has('error')) $("#login-modal").modal('show');
 		$('#login-modal').on('shown.bs.modal', function () {
  			$('#username').trigger('focus');
+		});
+		
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		$(document).ajaxSend(function(e, xhr, options) {
+		    xhr.setRequestHeader(header, token);
 		});
 		
 		/*ENVIO REGISTRO NUEVO USUARIO*/
